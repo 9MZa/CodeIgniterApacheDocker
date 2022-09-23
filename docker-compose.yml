@@ -1,0 +1,27 @@
+version: '2'
+
+services:
+  mariadb:
+    container_name: ci-mariadb
+    image: docker.io/bitnami/mariadb:10.6
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=myuser
+      - MARIADB_PASSWORD=123456
+      - MARIADB_DATABASE=ciapp_db
+  myapp:
+    container_name: ci-app
+    image: docker.io/bitnami/codeigniter:3
+    ports:
+      - '7700:8000'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - CODEIGNITER_DATABASE_HOST=mariadb
+      - CODEIGNITER_DATABASE_PORT_NUMBER=3306
+      - CODEIGNITER_DATABASE_USER=myuser
+      - CODEIGNITER_DATABASE_PASSWORD=123456
+      - CODEIGNITER_DATABASE_NAME=ciapp_db
+    volumes:
+      - './my-project:/app'
+    depends_on:
+      - mariadb
